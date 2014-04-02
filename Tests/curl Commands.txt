@@ -1,0 +1,7 @@
+ curl -d players=[{'name': 'player1', 'alliance': 'c0ven'},{'name': 'player2', 'alliance': 'c0ven'}] -d "systemname=w-q332" -X PUT http://localhost:5000/evesystem/w-q332
+ curl http://localhost:5000/evesystem/w-q332 -X PUT
+ 
+ 
+-d "players=[{'name': 'player1', 'alliance': 'c0ven'},
+			 {'name': 'player2', 'alliance': 'c0ven'}]"
+-d "systemname=w-q332"

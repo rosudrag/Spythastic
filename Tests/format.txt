@@ -1,0 +1,30 @@
+{
+	"systemname":"W-Q233",
+	"players":[player1, player2]
+}
+
+player1, player2 type player
+
+player = 
+{
+	"Name":"crashyza",					- Name of player
+	"Alliance": "HAPPY", 				- alliance ticker
+	"Corporation": "DMNA",				- corporation ticker
+	"Ship": "Ibis",						- ship type
+	"Direction": "O-FTHE"				- destination name: station, belt, planet, gate
+}
+
+Example:
+
+{
+"systemname":"W-Q233",
+"players":[
+			{"Name":"furyloy","Alliance":"C0VEN"},
+			{"Name":"IskFiend"},
+			{"Name":"TheyCallMeEyes"},
+			{"Name":"Ravenous Chartail","Alliance":"C0VEN"},
+			{"Name":"crashyza",}
+			]
+}
+
+Attributes that have null value should not be sent

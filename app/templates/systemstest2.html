@@ -1,0 +1,23 @@
+<!doctype html>
+<title>Testing Spythastic</title>
+<div>
+  {% for key, value in systems.items() %}
+    {% if value.name %}
+    <table border="1" style="width:300px">
+        <div >System {{ value.name }} Last Update {{ value.lastupdatetime }} seconds ago </div>
+        <tr>
+            <th>Player</th>
+            <th>Alliance</th>
+        </tr>
+        {% for player in value.players %}
+            <tr>
+                <td>{{ player.name }}</td>
+                <td>{{ player.alliance }}</td>
+            </tr>
+          {% endfor %}
+    </table>
+     {% endif %}
+    <br>
+  {% endfor %}
+  {% block body %}{% endblock %}
+</div>

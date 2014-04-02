@@ -1,0 +1,24 @@
+<!doctype html>
+<title>Flaskr</title>
+<div>
+  <h1>Test</h1>
+  {% for name, data in systems.items() %}
+    <div >System {{ name  }} ( Last update {{ data.lastupdatetime }} ) </div>
+      <table border = "1" style="width:300px">
+        <tr>
+            <th>Player</th>
+            <th>Alliance</th>
+        </tr>
+        {% for player in data['players'] %}
+            <div>
+                <tr>
+                    <td>{{ player['Name'] }}</td>
+                    <td>{{ player['Alliance'] }}</td>
+                </tr>
+            </div>
+        {% endfor %}
+      </table>
+      <br>
+  {% endfor %}
+  {% block body %}{% endblock %}
+</div>
