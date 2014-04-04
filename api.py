@@ -1,6 +1,7 @@
 from flask import Flask, request, render_template
 from flask.ext.restful import Resource, Api, fields
 from app import app
+from collections import OrderedDict
 import time
 
 api = Api(app)
@@ -19,9 +20,12 @@ systems = {}
 
 
 class Player:
-    def __init__(self, name, alliance):
+    def __init__(self, name, alliance, standings, corporation):
         self.name = name
         self.alliance = alliance
+        self.standings = standings
+        self.corporation = corporation
+
 
 class EVESystem:
     def __init__(self, name, players):
@@ -42,20 +46,44 @@ class Universe:
 
 class System(Resource):
     def put(self):
-        theJson = request.json
-        players = theJson['players']
+        systemsjsonlist = request.json
 
-        playerlist = list()
+        print(systemsjsonlist)
 
-        for p in players:
-            playerlist.append(Player(name=p['Name'], alliance=p['Alliance']))
+        #systems inserted counter
+        nrsystemsinserted = 0
 
-        system_name = theJson['systemname']
+        #Go through each system and construct player list
+        for systemjson in systemsjsonlist:
 
-        theSystem = EVESystem(name=system_name, players=playerlist)
+            players = systemjson['players']
 
-        systems[system_name] = theSystem
-        return theSystem.name + ' inserted'
+            playerlist = list()
+
+            #construct the player objects
+            for p in players:
+                allianceToSet = str(p.get('Alliance', ''))
+                nameToSet = p.get('Name', '')
+                standingsToSet = p.get('Standings', '')
+                corpToSet = p.get('Corporation', '')
+
+                thePlayer = Player(name=nameToSet, alliance=allianceToSet, standings=standingsToSet, corporation=corpToSet)
+
+                playerlist.append(thePlayer)
+
+            system_name = systemjson['systemname']
+
+            if system_name == '':
+                continue
+
+            sortedPlayerList1 = sorted(playerlist, key=lambda x: x.alliance)
+            theSystem = EVESystem(name=system_name, players=sortedPlayerList1)
+            systems[system_name] = theSystem
+
+            nrsystemsinserted += 1
+
+        return 'Inserted %s number of systems' % nrsystemsinserted
+
 
 @app.route('/evesystems')
 def evesystems():
@@ -64,11 +92,19 @@ def evesystems():
         systemNames += value['name'] + ' '
     return render_template('test1.html', name=systemNames)
 
+
 @app.route('/htmltest')
 def htmltest():
-    return render_template('base.html', systems=systems)
+    sortedSystems = OrderedDict(sorted(systems.items(), key=lambda x: x[1].name))
+    return render_template('base.html', systems=sortedSystems)
+
+@app.route('/htmltest2')
+def htmltest2():
+    sortedSystems = OrderedDict(sorted(systems.items(), key=lambda x: x[1].name))
+    return render_template('base2.html', systems=sortedSystems)
+
 
 api.add_resource(System, '/evesystem')
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host='0.0.0.0')

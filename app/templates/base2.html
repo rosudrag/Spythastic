@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Spythastic</title>
+    <link href="http://netdna.bootstrapcdn.com/bootswatch/3.1.1/slate/bootstrap.min.css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <a href="../" class="navbar-brand">Spythasticus</a>
+          <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+        </div>
+        <div class="navbar-collapse collapse" id="navbar-main">
+          <ul class="nav navbar-nav">
+            <li>
+              <a href="">Holder</a>
+            </li>
+            <li>
+              <a href="">Holder2</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="container">
+
+      <div class="page-header" id="banner">
+        <div class="row">
+          <div class="col-lg-6">
+            <h1>Mega spy network!</h1>
+            <p class="lead">Coded by DRR</p>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Tables
+      ================================================== -->
+      <div class="bs-docs-section">
+
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="page-header">
+            </div>
+
+            <div class="bs-component">
+
+              {% for key, value in systems.items() %}
+                    {% if value.name %}
+                        <table class="table table-striped table-hover ">
+                             <div >
+                                <h1>{{ value.name }}</h1> Last Update {{ value.lastupdatetime }} seconds ago
+                             </div>
+                             <thead>
+                                <tr>
+                                    <th>Player</th>
+                                    <th>Alliance</th>
+                                    <th>Corporation</th>
+                                    <th>Standings</th>
+                                </tr>
+                             </thead>
+                             <tbody>
+                                {% for player in value.players %}
+                                    {% if player.alliance == 'C0VEN' %}
+                                        <tr class="info">
+                                            <td>{{ player.name }}</td>
+                                            <td>{{ player.alliance }}</td>
+                                            <td>{{ player.corporation }}</td>
+                                            <td>{{ player.standings }}</td>
+                                        </tr>
+                                    {% else %}
+                                         <tr>
+                                            <td>{{ player.name }}</td>
+                                            <td>{{ player.alliance }}</td>
+                                            <td>{{ player.corporation }}</td>
+                                            <td>{{ player.standings }}</td>
+                                        </tr>
+                                    {% endif %}
+                                {% endfor %}
+                             </tbody>
+                        </table>
+                    {% endif %}
+              {% endfor %}
+
+            <!--
+              <table class="table table-striped table-hover ">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Column heading</th>
+                    <th>Column heading</th>
+                    <th>Column heading</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>1</td>
+                    <td>Column content</td>
+                    <td>Column content</td>
+                    <td>Column content</td>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td>Column content</td>
+                    <td>Column content</td>
+                    <td>Column content</td>
+                  </tr>
+                  <tr class="info">
+                    <td>3</td>
+                    <td>Column content</td>
+                    <td>Column content</td>
+                    <td>Column content</td>
+                  </tr>
+                  <tr class="success">
+                    <td>4</td>
+                    <td>Column content</td>
+                    <td>Column content</td>
+                    <td>Column content</td>
+                  </tr>
+                  <tr class="danger">
+                    <td>5</td>
+                    <td>Column content</td>
+                    <td>Column content</td>
+                    <td>Column content</td>
+                  </tr>
+                  <tr class="warning">
+                    <td>6</td>
+                    <td>Column content</td>
+                    <td>Column content</td>
+                    <td>Column content</td>
+                  </tr>
+                  <tr class="active">
+                    <td>7</td>
+                    <td>Column content</td>
+                    <td>Column content</td>
+                    <td>Column content</td>
+                  </tr>
+                </tbody>
+              </table> -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="source-modal" class="modal fade">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+              <h4 class="modal-title">Source Code</h4>
+            </div>
+            <div class="modal-body">
+              <pre></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </body>
+</html>
