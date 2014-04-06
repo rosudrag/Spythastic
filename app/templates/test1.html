@@ -1,7 +1,29 @@
 <!doctype html>
-<title>Hello from Flask</title>
-{% if name %}
-  <h1> Hello {{ name }}!</h1>
-{% else %}
-  <h1>Hello World!</h1>
-{% endif %}
+<head>
+    <title>Testing Spythastic</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+          {% for key, value in systems.items() %}
+            {% if value.name %}
+            <table border="1" style="width:300px">
+                <div >System {{ value.name }} Last Update {{ value.lastupdatetime }} seconds ago </div>
+                <tr>
+                    <th>Player</th>
+                    <th>Alliance</th>
+                </tr>
+                {% for player in value.players %}
+                    <tr>
+                        <td>{{ player.name }}</td>
+                        <td>{{ player.alliance }}</td>
+                    </tr>
+                  {% endfor %}
+            </table>
+             {% endif %}
+            <br>
+          {% endfor %}
+        </div>
+    </div>
+</body>

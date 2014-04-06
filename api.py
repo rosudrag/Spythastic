@@ -1,49 +1,16 @@
-from flask import Flask, request, render_template
-from flask.ext.restful import Resource, Api, fields
+from bson import json_util
+
+from flask import request,render_template
+from flask.ext.restful import Resource, Api
 from app import app
-from collections import OrderedDict
-import time
+from app.modelsDA import *
+
 
 api = Api(app)
 
 #Json models
 
-player1 = {'name': 'noob1', 'alliance': 'boon'}
-player2 = {'name': 'newb', 'alliance': 'c0ven'}
-
-system1 = {'name': 'w-q332',
-           'players': [player1, player2]}
-
-systems = {}
-
-#Classes
-
-
-class Player:
-    def __init__(self, name, alliance, standings, corporation):
-        self.name = name
-        self.alliance = alliance
-        self.standings = standings
-        self.corporation = corporation
-
-
-class EVESystem:
-    def __init__(self, name, players):
-        self.name = name
-        self.players = players
-        self.timestamp = time.time()
-
-    @property
-    def lastupdatetime(self):
-        return int(time.time() - self.timestamp)
-
-
-class Universe:
-    def __init__(self, name, systems):
-        self.name = name
-        self.systems = systems
-
-
+'''
 class System(Resource):
     def put(self):
         systemsjsonlist = request.json
@@ -85,14 +52,6 @@ class System(Resource):
         return 'Inserted %s number of systems' % nrsystemsinserted
 
 
-@app.route('/evesystems')
-def evesystems():
-    systemNames = ''
-    for key, value in systems.items():
-        systemNames += value['name'] + ' '
-    return render_template('test1.html', name=systemNames)
-
-
 @app.route('/htmltest')
 def htmltest():
     sortedSystems = OrderedDict(sorted(systems.items(), key=lambda x: x[1].name))
@@ -105,6 +64,96 @@ def htmltest2():
 
 
 api.add_resource(System, '/evesystem')
+'''
+
+class ExposeUniverse(Resource):
+    def put(self):
+        systemsjsonlist = request.json
+
+        #print(systemsjsonlist)
+
+        #systems inserted counter
+        nrsystemsinserted = 0
+
+        universe = UniverseDA()
+        #Go through each system and construct player list
+        for systemjson in systemsjsonlist:
+
+            players = systemjson['players']
+
+            playerlist = list()
+
+            #construct the player objects
+            for p in players:
+                allianceToSet = str(p.get('Alliance', ''))
+                nameToSet = p.get('Name', '')
+                standingsToSet = str(p.get('Standings', ''))
+                corpToSet = p.get('Corporation', '')
+
+                thePlayer = EVEPlayerDA(name=nameToSet, alliance=allianceToSet, standings=standingsToSet, corporation=corpToSet)
+
+                playerlist.append(thePlayer)
+
+            system_name = systemjson['systemname']
+
+            if system_name == '':
+                continue
+
+            sortedPlayerList = sorted(playerlist, key=lambda x: x.alliance)
+            theSystem = EVESystemDA(name=system_name, players=sortedPlayerList)
+
+            universe.systems.append(theSystem)
+
+            nrsystemsinserted += 1
+
+        try:
+            universe.save()
+        except Exception as e:
+            print(e)
+
+        return 'Inserted %s number of systems' % nrsystemsinserted
+
+
+def SerialiseUniverse(x):
+    systems = list()
+    for s in x.systems:
+        playerList = list()
+        for p in s.players:
+            player = EVEPlayerBE(name=p.name, alliance=p.alliance, corporation=p.corporation, standings=p.standings)
+            playerList.append(player)
+        system = EVESystemBE(name=s.name, players=playerList)
+        systems.append(system)
+    universe = UniverseBE(systems=systems)
+
+    return universe
+
+
+def SerialiseSystems(x):
+    systems = {}
+    for s in x.systems:
+        playerList = list()
+        for p in s.players:
+            player = EVEPlayerBE(name=p.name, alliance=p.alliance, corporation=p.corporation, standings=p.standings)
+            playerList.append(player)
+        system = EVESystemBE(name=s.name, players=playerList)
+        systems[s.name] = system
+    return systems
+
+
+@app.route('/htmltest2')
+def htmltest2():
+    try:
+        x = UniverseDA.objects.first()
+        #systems = SerialiseSystems(x)
+        systems = {}
+        for s in x.systems:
+            system = s.BE()
+            systems[system.name] = system
+    except Exception as e:
+        print(e)
+    return render_template('/base2.html', systems=systems)
+
+api.add_resource(ExposeUniverse, '/evesystem')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
